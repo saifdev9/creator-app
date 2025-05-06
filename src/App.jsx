@@ -7,6 +7,7 @@ import Register from "./pages/Register";
 import { Toaster } from "sonner";
 import Feed from "./pages/Feed";
 import AppLayout from "./UI/AppLayout";
+import SavedFeed from "./pages/SavedFeed";
 
 const App = () => {
   return (
@@ -19,6 +20,7 @@ const App = () => {
           <Route index element={<Navigate to="feed" replace />} />
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="feed" element={<Feed />} />
+          <Route path="saved-feeds" element={<SavedFeed />} />
         </Route>
       </Routes>
     </BrowserRouter>
