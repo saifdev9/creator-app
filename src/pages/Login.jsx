@@ -1,14 +1,15 @@
 // src/pages/Login.jsx
-import { Button } from "../components/ui/button";
-import { Input } from "../components/ui/input";
-import { Card, CardContent } from "../components/ui/card";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import Logo from "@/UI/Logo";
 import axios from "@/axios";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { z } from "zod";
-import Logo from "@/UI/Logo";
+import { Button } from "../components/ui/button";
+import { Card, CardContent } from "../components/ui/card";
+import { Input } from "../components/ui/input";
 
 const formSchema = z.object({
   email: z.string().email(),
@@ -22,6 +23,12 @@ const Login = () => {
     handleSubmit,
     formState: { errors },
   } = useForm({ resolver: zodResolver(formSchema) });
+
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    if (user) navigate("/app");
+  }, [navigate]);
 
   const onSubmit = async (data) => {
     try {
