@@ -7,15 +7,23 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import axios from "../axios";
 import TextExpander from "@/UI/TextExpander";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { addFeed, getFeeds, removeFeed } from "@/feedSlice";
+import Filter from "@/UI/Filter";
 
 const Feed = () => {
   const [feed, setFeed] = useState([]);
   const [loading, setLoading] = useState(true);
   const dispatch = useDispatch();
   const feeds = useSelector(getFeeds);
+  const [searchParams] = useSearchParams();
+  const filterValue = searchParams.get("filterByMedia");
+  const feedIds = feeds.map((feed) => feed.id);
+
+  const filterFeeds = filterValue
+    ? feed?.filter((fd) => fd.source === filterValue)
+    : feed;
 
   useEffect(() => {
     const fetchFeed = async () => {
@@ -38,13 +46,28 @@ const Feed = () => {
   return (
     <div className="min-h-screen bg-background text-foreground py-14 px-4 sm:px-6">
       <div className="max-w-6xl mx-auto space-y-12">
-        <motion.h1
-          className="text-4xl md:text-5xl font-bold tracking-tight text-center"
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-        >
-          Your Curated Feed
-        </motion.h1>
+        <div className="flex items-center justify-between">
+          <motion.h1
+            className="text-4xl md:text-5xl font-bold tracking-tight"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+          >
+            Your Curated Feed
+          </motion.h1>
+
+          <div className="flex gap-4">
+            <Filter
+              placeholder="Select a social media"
+              label="Social media"
+              paramsLabel="filterByMedia"
+              items={[
+                { label: "Reddit", value: "reddit" },
+                { label: "LinkedIn", value: "linkedin" },
+                { label: "Twitter", value: "twitter" },
+              ]}
+            />
+          </div>
+        </div>
 
         {loading ? (
           <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
@@ -52,7 +75,7 @@ const Feed = () => {
               <Skeleton key={i} className="h-36 w-full rounded-xl" />
             ))}
           </div>
-        ) : feed.length === 0 ? (
+        ) : feed.length === 0 || filterFeeds.length === 0 ? (
           <p className="text-center text-muted-foreground text-lg">
             No posts available at the moment.
           </p>
@@ -67,8 +90,8 @@ const Feed = () => {
               },
             }}
           >
-            {feed.map((post, i) => {
-              const isSaved = feeds.map((feed) => feed.id).includes(i);
+            {filterFeeds?.map((post, i) => {
+              const isSaved = feedIds.includes(i);
 
               return (
                 <motion.div
