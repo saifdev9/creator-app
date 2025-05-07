@@ -55,6 +55,7 @@ const Dashboard = () => {
   }
 
   const isAdmin = userData.role === "admin";
+  console.log(userData);
 
   return (
     <div className="max-w-6xl mx-auto px-6 py-16 space-y-10">

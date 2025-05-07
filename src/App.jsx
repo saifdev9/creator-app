@@ -8,6 +8,7 @@ import { Toaster } from "sonner";
 import Feed from "./pages/Feed";
 import AppLayout from "./UI/AppLayout";
 import SavedFeed from "./pages/SavedFeed";
+import ProctedRoute from "./pages/ProctedRoute";
 
 const App = () => {
   return (
@@ -16,7 +17,14 @@ const App = () => {
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/app" element={<AppLayout />}>
+        <Route
+          path="/app"
+          element={
+            <ProctedRoute>
+              <AppLayout />
+            </ProctedRoute>
+          }
+        >
           <Route index element={<Navigate to="feed" replace />} />
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="feed" element={<Feed />} />

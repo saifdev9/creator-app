@@ -59,3 +59,70 @@ exports.getCurrentUser = async (req, res) => {
       .json({ message: "Failed to fetch user", error: err.message });
   }
 };
+
+exports.awardCredits = async (req, res) => {
+  const { action } = req.body; // "profile_complete" or "feed_interaction"
+  const userId = req.user.id;
+
+  try {
+    const user = await User.findById(userId);
+    let creditAmount = 0;
+    let actionDescription = "";
+
+    switch (action) {
+      case "profile_complete":
+        if (!user.profileCompleted) {
+          user.credits += 10;
+          user.profileCompleted = true; // add this field in model
+          creditAmount = 10;
+          actionDescription = "Profile completed +10";
+        } else {
+          return res.status(400).json({ message: "Profile already completed" });
+        }
+        break;
+      case "feed_interaction":
+        user.credits += 2;
+        creditAmount = 2;
+        actionDescription = "Feed interaction +2";
+        break;
+      default:
+        return res.status(400).json({ message: "Invalid action" });
+    }
+
+    await user.save();
+
+    await ActivityLog.create({
+      userId,
+      action: actionDescription,
+      date: new Date(),
+    });
+
+    res.json({ credits: user.credits, message: actionDescription });
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: "Credit awarding failed", error: err.message });
+  }
+};
+
+exports.adminUpdateCredits = async (req, res) => {
+  const { userId, credits } = req.body;
+
+  try {
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    user.credits = credits;
+    await user.save();
+
+    await ActivityLog.create({
+      userId,
+      action: `Admin set credits to ${credits}`,
+      date: new Date(),
+    });
+
+    res.json({ message: "Credits updated", credits: user.credits });
+  } catch (err) {
+    res.status(500).json({ message: "Update failed", error: err.message });
+  }
+};
