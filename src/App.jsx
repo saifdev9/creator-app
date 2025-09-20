@@ -25,7 +25,7 @@ const App = () => {
             </ProctedRoute>
           }
         >
-          <Route index element={<Navigate to="feed" replace />} />
+          <Route index element={<Navigate to="feed"  />} />
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="feed" element={<Feed />} />
           <Route path="saved-feeds" element={<SavedFeed />} />
