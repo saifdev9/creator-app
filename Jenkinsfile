@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/saifdev9/todos-next-ts'
+                git branch: 'main', url: 'https://github.com/saifdev9/creator-app'
             }
         }
         stage('Install Dependencies') {
