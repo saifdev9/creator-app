@@ -1,9 +1,9 @@
 pipeline {
-    agent { label 'rdp-node' }  // Job RDP machine pe chalega
+    agent { label 'rdp-node' }
 
     triggers {
-        githubPush()  // Trigger on GitHub push
-        cron('H 2 * * *')   // Aur bhi run daily at 2 AM
+        githubPush()
+        cron('H 2 * * *')
     }
 
     stages {
@@ -11,14 +11,14 @@ pipeline {
             steps {
                 git branch: 'main',
                     url: 'https://github.com/saifdev9/creator-app',
-                    credentialsId: 'github-pat'  // Jenkins me saved GitHub PAT
+                    credentialsId: 'github-pat'
             }
         }
 
         stage('Install Dependencies') {
             steps {
                 bat '''
-                cd C:\\jenkins-agent\\workspace\\creator-app
+                cd %WORKSPACE%
                 npm install
                 '''
             }
@@ -27,7 +27,7 @@ pipeline {
         stage('Run Tests') {
             steps {
                 bat '''
-                cd C:\\jenkins-agent\\workspace\\creator-app
+                cd %WORKSPACE%
                 npm test -- --watchAll=false
                 '''
             }
@@ -36,7 +36,7 @@ pipeline {
         stage('Build') {
             steps {
                 bat '''
-                cd C:\\jenkins-agent\\workspace\\creator-app
+                cd %WORKSPACE%
                 npm run build
                 '''
             }
@@ -45,8 +45,8 @@ pipeline {
         stage('Run App') {
             steps {
                 bat '''
-                cd C:\\jenkins-agent\\workspace\\creator-app
-                npm start
+                cd %WORKSPACE%
+                npm run dev
                 '''
             }
         }
