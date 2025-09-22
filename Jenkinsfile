@@ -1,5 +1,9 @@
 pipeline {
-    agent any
+    agent any //macgine(node) where my pipeline stages actually run
+
+       triggers {
+        cron('H 2 * * *')   // Runs every day at 2 AM
+    }
 
     stages {
         stage('Checkout') {
